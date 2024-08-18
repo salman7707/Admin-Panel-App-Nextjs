@@ -31,3 +31,35 @@ body {
     text-wrap: balance;
   }
 }
+
+.scrollbar{
+  visibility: visible;
+  scrollbar-width: thin;
+  scrollbar-color: #1E293B #1E293B;
+  scrollbar-arrow-color: transparent;
+  overflow-y: scroll;
+}
+.scrollbar:hover{
+  visibility: visible;
+  border-radius: 25px;
+  scrollbar-width: thin;
+  scrollbar-arrow-color: none;
+  scrollbar-color: #131212 #1E293B;
+  scrollbar-arrow-color: black;
+  overflow-y: scroll;
+}
+body{
+  visibility: none;
+  scrollbar-width: thin;
+  scrollbar-color: #1E293B #1E293B;
+  scrollbar-gutter: none;
+  overflow-y: auto;
+}
+body:hover{
+  visibility: visible;
+  scrollbar-width: thin;
+  scrollbar-arrow-color: none;
+  scrollbar-color: #624BFF #1E293B;
+  scrollbar-gutter: none;
+  overflow-y: auto;
+}

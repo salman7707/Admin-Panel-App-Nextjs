@@ -1,71 +1,101 @@
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/router";
+import { signIn } from "next-auth/react"
+import Sidebar from "@/components/sidebar"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("salman@gmail.com");
+  const [password, setPassword] = useState("123456");
   const [errorMessage, setErrorMessage] = useState(null);
   let Router = useRouter();
+  const error = Router.query?.error;
 
   async function HandleSubmit(e) {
     e.preventDefault();
+    setErrorMessage("")
+    try {
+      const res = await signIn("credentials",{
+        email,
+        password,
+        redirect:false
+      })
+      if(!res.ok){
+        setErrorMessage("Invalid Email and Password")
+        return null
+      } else {
+        alert("Login Successfull")
+        console.log("succesfully login")
+        window.location.href = "/dashboard"
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
   const HandleClick = () => {
-    
   };
-  function routeToReg(){
-    Router.push("/")
+  function routeToReg() {
+    Router.push("/");
   }
   return (
-      <div className="w-full bg-blue-100 h-screen flex items-center justify-center">
-        <div className="w-[600px] flex  items-center justify-center h-[400px] shadow-lg rounded bg-blue-200">
-          <form className="flex flex-col" onSubmit={HandleSubmit}>
-            {errorMessage && (
-              <p className="text-xl font-semibold ">{errorMessage}</p>
-            )}
-            <h1 className="text-4xl font-bold flex items-center justify-center mb-4 text-black">
-              Sign In
-            </h1>
-            <label
-              className="text-xl font-semibold text-gray-700 "
-              htmlFor="email"
-            >
+    <div className="flex h-full">
+    <div className="flex bg-[#0F172A] w-[100%] py-10 px-10">
+      <div className=" bg-[#1E293B] max-w-[70%] h-[390px] w-[60%] p-3 rounded-md">
+        <form className="flex flex-col" onSubmit={HandleSubmit}>
+          {errorMessage && (
+            <p className="text-xl text-black font-semibold ">{errorMessage}</p>
+          )}
+          <h1 className=" text-[#d4d4d8] text-xl font-bold animate-pulse pl-5">Login</h1>
+        <div className="flex flex-col space-y-7 mt-10">
+                    
+          <div className="flex flex-col w-60 ml-2 space-y-4">
+            <label className="text-[#a9a9b1] text-sm font-semibold" htmlFor="name">
               Email
             </label>
             <input
               type="email"
+              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mb-3 w-60 p-2 rounded text-black"
+              className=" bg-transparent border-2 py-2 pl-4 focus:outline-none rounded-md border-[#2a334f] shadow-lg"
               placeholder="Email"
             />
-            <label
-              className="text-xl font-semibold text-gray-700"
-              htmlFor="email"
-            >
+          </div>
+
+          <div className="flex flex-col w-60 ml-2 space-y-4">
+            <label className="text-[#a9a9b1] text-sm font-semibold" htmlFor="name">
               Password
             </label>
             <input
               type="text"
+              id="password"
               value={password}
-              placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
-              className="mb-3 w-60 p-2 rounded text-black"
+              className="bg-transparent border-2 py-2 pl-4 focus:outline-none rounded-md border-[#2a334f] shadow-lg"
+              placeholder="Password"
             />
-            <div className="flex items-center justify-center">
-              <button
-                className="text-lg bg-black w-20 rounded  py-2"
-                type="submit"
-                onClick={HandleClick}
-              >
-                Login
-              </button>
-            </div>
-            {/* <div className="flex items-center justify-center">
-              <button onClick={routeToReg} className="mt-2 text-white text-xl cursor-pointer px-2 bg-black rounded">If You Already Registered</button>
-            </div> */}
-          </form>
+          </div>
         </div>
+          <div className="mt-14 ml-2 mb-4">
+          <div className="flex items-center space-x-2">
+            <button className=" bg-[#2e6ab9] py-2 px-6 rounded-md font-semibold" type="submit">
+              Sign In
+            </button>
+            <div className="flex items-center justify-center">
+            <p className=" text-gray-600 text-base">
+              Don't Have An Account?
+            </p>
+            <div
+              onClick={routeToReg}
+              className=" text-[#2e6ab9] font-semibold cursor-pointer text-base pl-1"
+            >
+              Register
+            </div>
+          </div>
+          </div>
+        </div>
+        </form>
       </div>
+    </div>
+    </div>
   );
 }

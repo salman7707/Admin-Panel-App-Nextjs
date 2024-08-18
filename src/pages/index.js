@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Sidebar from "@/components/sidebar";
 
 export default function LoginPage() {
   const [name, setName] = useState("");
@@ -10,95 +11,140 @@ export default function LoginPage() {
 
   async function HandleSubmit(e) {
     e.preventDefault();
-    if(name === "" || email===""|| password===""){
-       return (
-        alert("please Give complete Data") && null
-       )
+    if (name === "" || email === "" || password === "") {
+      return alert("please Give complete Data") && null;
     }
+    setErrorMessage("")
     try {
-      const data = await fetch("/api/register",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
+      const resUserExists = await fetch("/api/findUser", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({name, email, password})
-      })
-      console.log("fetch portion work perfectly")
-      const res = data.json()
-      if(res.status === 200){
-        console.log("User Registered Successfully")
+        body: JSON.stringify({ email }),
+      });
+
+      const { UserExists } = await resUserExists.json();
+
+      if (UserExists) {
+        setErrorMessage("User Already Exsists");
+        return;
+      }
+
+
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      console.log("fetch portion work perfectly");
+      if (res.status === 200) {
+        console.log("User Register Successfully");
+        setErrorMessage("");
+        alert("User Created Successfully");
+        Router.push("/login");
+      } else {
+        const data = await res.json();
+        console.log("Please Give Correct Credentials");
+        setErrorMessage(data.message);
       }
     } catch (error) {
-      
+      console.log("error while fetch", error);
     }
-
   }
-  function routeToReg(){
-    Router.push("/register")
+  function routeToReg() {
+    Router.push("/login");
   }
   return (
-      <div className="w-full bg-blue-100 h-screen flex items-center justify-center">
-        <div className="w-[600px] flex  items-center justify-center h-[450px] shadow-lg rounded bg-blue-200">
+    <div className="flex h-full">
+      <div className="flex bg-[#0F172A] h-full w-[100%] pt-10 px-10">
+        <div className=" bg-[#1E293B] max-w-[70%] h-[500px] w-[65%] p-3 rounded-md">
           <form className="flex flex-col" onSubmit={HandleSubmit}>
             {errorMessage && (
-              <p className="text-xl font-semibold ">{errorMessage}</p>
+              <p className="text-xl text-black font-semibold ">
+                {errorMessage}
+              </p>
             )}
-            <h1 className="text-4xl font-bold flex items-center justify-center mb-4 text-black">
+            <h1 className=" text-[#d4d4d8] text-xl font-bold  pl-5">
               Register
             </h1>
-            <label
-              className="text-xl font-semibold text-gray-700 "
-              htmlFor="name"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="mb-3 w-60 p-2 rounded text-black"
-              placeholder="Email"
-            />
-            <label
-              className="text-xl font-semibold text-gray-700 "
-              htmlFor="email"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mb-3 w-60 p-2 rounded text-black"
-              placeholder="Email"
-            />
-            <label
-              className="text-xl font-semibold text-gray-700"
-              htmlFor="email"
-            >
-              Password
-            </label>
-            <input
-              type="text"
-              value={password}
-              placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
-              className="mb-3 w-60 p-2 rounded text-black"
-            />
-            <div className="flex items-center justify-center">
-              <button
-                className="text-lg bg-black w-20 rounded  py-2"
-                type="submit"
-              >
-                Sign Up
-              </button>
+            <div className="flex flex-col space-y-7 mt-10">
+              <div className="flex flex-col w-60 ml-2 space-y-4">
+                <label
+                  className="text-[#a9a9b1] text-sm font-semibold"
+                  htmlFor="name"
+                >
+                  UserName
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="bg-transparent border-2 py-2 pl-4 outline-none rounded-md border-[#2a334f] shadow-lg"
+                  placeholder="Username"
+                />
+              </div>
+
+              <div className="flex flex-col w-60 ml-2 space-y-4">
+                <label
+                  className="text-[#a9a9b1] text-sm font-semibold"
+                  htmlFor="name"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="bg-transparent border-2 py-2 pl-4 outline-none rounded-md border-[#2a334f] shadow-lg"
+                  placeholder="Email"
+                />
+              </div>
+
+              <div className="flex flex-col w-60 ml-2 space-y-4">
+                <label
+                  className="text-[#a9a9b1] text-sm font-semibold"
+                  htmlFor="name"
+                >
+                  Password
+                </label>
+                <input
+                  type="text"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="bg-transparent border-2 py-2 pl-4 outline-none rounded-md border-[#2a334f] shadow-lg"
+                  placeholder="Password"
+                />
+              </div>
             </div>
-            <div className="flex items-center justify-center">
-              <p  className=" text-gray-600 text-lg">If User Is Already Registered</p>
-              <button onClick={routeToReg} className="text-gray-700 font-semibold cursor-pointer text-lg pl-1">Login</button>
+            <div className="mt-14 ml-2 mb-4">
+              <div className="flex items-center space-x-2">
+                <button
+                  className=" bg-[#2e6ab9] py-2 px-6 rounded-md font-semibold"
+                  type="submit"
+                >
+                  Sign Up
+                </button>
+                <div className="flex items-center justify-center">
+                  <p className=" text-gray-600 text-base">Already Have An Account?</p>
+                  <div
+                    onClick={routeToReg}
+                    className="text-[#2e6ab9] font-semibold cursor-pointer text-base pl-1"
+                  >
+                    Login
+                  </div>
+                </div>
+              </div>
             </div>
           </form>
         </div>
       </div>
+    </div>
   );
 }
