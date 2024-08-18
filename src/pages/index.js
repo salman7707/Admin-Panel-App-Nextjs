@@ -69,7 +69,7 @@ export default function LoginPage() {
               </p>
             )}
             <h1 className=" text-[#d4d4d8] text-xl font-bold  pl-5">
-              Register
+              Register Salman
             </h1>
             <div className="flex flex-col space-y-7 mt-10">
               <div className="flex flex-col w-60 ml-2 space-y-4">
