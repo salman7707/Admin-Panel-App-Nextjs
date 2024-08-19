@@ -8,7 +8,6 @@ export default function LoginPage() {
   const [password, setPassword] = useState("123456");
   const [errorMessage, setErrorMessage] = useState(null);
   let Router = useRouter();
-  const error = Router.query?.error;
 
   async function HandleSubmit(e) {
     e.preventDefault();
